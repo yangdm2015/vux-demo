@@ -12,6 +12,7 @@
 
   function getProp (obj, propName) {
     let arr = []
+
     function _getProp (obj, propName) {
       let flag = false
       let prop = null
@@ -38,6 +39,7 @@
       }
       return {flag, prop}
     }
+
     let result = _getProp(obj, propName)
     return {...result, arr}
   }
@@ -45,12 +47,17 @@
   let a = {d: {}, e: 2, b: {c: 1}}
   let result = getProp(a, "c")
   console.log('getProp(a,"c") = ', result)
-  function getHandler(obj,arr){
-    
+  function getHandler (obj, arr) {
+    return obj[arr[0]]
   }
 
-  let handler = {}
-
+  let handler = getHandler(a, result.arr)
+  console.log('handler = ', handler)
+  handler.a = 5
+  console.log('handler = ', handler)
+  console.log('a = ', a)
+  //  a['b']['c'] = 6
+  //  console.log('a = ', a)
   export default {
     render: function (createElement) {
       let self = this
