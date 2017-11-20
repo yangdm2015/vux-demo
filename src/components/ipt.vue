@@ -1,34 +1,35 @@
 <template>
   <div>
     <group>
-      <x-input ref="mb"
-               title="正数"
-               type="number"
-               required
-               v-model="mn">
-      </x-input>
-      <x-input is-type="china-mobile"
-               title="手机号码格式化"
-               v-model="testText"
-               mask="999 9999 9999"
-               :max="13">
-      </x-input>
-      <x-input is-type="china-name"
-               title="中国人名"
-               v-model="name"
-               :max="13">
-      </x-input>
-
+      <!--<x-input ref="mb"-->
+      <!--title="正数"-->
+      <!--type="number"-->
+      <!--required-->
+      <!--v-model="mn">-->
+      <!--</x-input>-->
+      <!--<x-input is-type="china-mobile"-->
+      <!--title="手机号码格式化"-->
+      <!--v-model="testText"-->
+      <!--mask="999 9999 9999"-->
+      <!--:max="13">-->
+      <!--</x-input>-->
+      <!--<x-input is-type="china-name"-->
+      <!--title="中国人名"-->
+      <!--v-model="name"-->
+      <!--:max="13"-->
+      <!--disabled>-->
+      <!--</x-input>-->
+      <!--<calendar v-model="demo1"-->
+      <!--title="demo1"-->
+      <!--disable-past-->
+      <!--placeholder="placeholder">-->
+      <!--</calendar>-->
       <popup-radio title='开户银行'
                    :options="op"
-                   v-model="bc">
+                   v-model="bc"
+                   :readonly="false">
       </popup-radio>
-      <calendar v-model="demo1"
-                :title="demo1"
-                disable-past
-                placeholder="placeholder"
-                :display-format="i=>i">
-      </calendar>
+      <!--<popup-radio title="options" :options="options1" v-model="option1"></popup-radio>-->
 
     </group>
     <span @click="fuzhi">fuzhi</span>
@@ -38,7 +39,7 @@
 </template>
 
 <script>
-  import { Group, XInput, Cell, PopupRadio, Calendar } from 'vux'
+  import { Group, XInput, PopupRadio, Calendar } from 'vux'
   function calendarFormat (value, type) {
     console.log('calendarFormat ', value)
     let deal = value.split('T')[0]
@@ -62,10 +63,12 @@
   export default {
     components: {
       Group,
-      XInput, Cell, PopupRadio, Calendar
+      XInput, PopupRadio, Calendar
     },
     data () {
       return {
+        option1: '',
+        options1: ['A', 'B', 'C'],
         testText: 0,
         name: '',
         id: '',

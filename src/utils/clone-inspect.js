@@ -14,7 +14,7 @@
 //     return newobj;
 //   }
 // }
-export default function clone(obj) {
+export default function clone (obj) {
   if (typeof obj !== 'object') {
     return obj
   } else if (!obj) { // null
@@ -29,11 +29,15 @@ export default function clone(obj) {
         newobj.set(key, clone(i))
       })
     } else {
-      newobj = obj instanceof Array ? [] : {};
+      newobj = obj instanceof Array ? [] : {}
       for (let i in obj) {
-        newobj[i] = typeof obj[i] === 'object' ? clone(obj[i]) : obj[i];
+        newobj[i] = typeof obj[i] === 'object' ? clone(obj[i]) : obj[i]
+        // console.log(' newobj = ', newobj)
       }
     }
-    return newobj;
+    debugger
+
+    console.log('obj = ', obj, 'newobj = ', newobj)
+    return newobj
   }
 }

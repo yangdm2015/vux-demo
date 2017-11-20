@@ -8,9 +8,12 @@ import Home from './components/HelloFromVux'
 import PopupRadio from './components/PopupRadio'
 import xaddress from './components/xaddress'
 import ipt from './components/ipt'
+import vhtml from './components/vhtml.vue'
 import arr from './components/array'
 import renderw from './components/render-wrap'
 import alert from './components/alert'
+import init from './init/init'
+init()
 // import r from './router/index'
 Vue.use(VueRouter)
 // console.log('r = ',r)
@@ -32,6 +35,10 @@ const routes = [
     component: ipt
   },
   {
+    path: '/vhtml',
+    component: vhtml
+  },
+  {
     path: '/arr',
     component: arr
   },
@@ -47,7 +54,7 @@ const routes = [
 const router = new VueRouter({
   routes
 })
-console.log('router = ', router)
+// console.log('router = ', router)
 FastClick.attach(document.body)
 
 Vue.config.productionTip = false

@@ -1,66 +1,14 @@
 <template>
   <div>
-    <group>
-      <x-input ref="mb"
-               title="正数"
-               type="number"
-               required
-               v-model="mn">
-      </x-input>
-      <x-input is-type="china-mobile"
-               title="手机号码格式化"
-               v-model="testText"
-               mask="999 9999 9999"
-               :max="13">
-      </x-input>
-      <x-input is-type="china-name"
-               title="中国人名"
-               v-model="name"
-               :max="13"
-               disabled>
-      </x-input>
-
-      <popup-radio title='开户银行'
-                   :options="op"
-                   v-model="bc"
-                   :readonly="false">
-      </popup-radio>
-      <calendar v-model="demo1"
-                :title="demo1"
-                disable-past
-                placeholder="placeholder"
-                :display-format="i=>i">
-      </calendar>
+    <group v-html="ipt">
 
     </group>
-    <span @click="fuzhi">fuzhi</span>
     <span @click="test">text</span>
-    <span @click="ptime">ptime</span>
   </div>
 </template>
 
 <script>
   import { Group, XInput, Cell, PopupRadio, Calendar } from 'vux'
-  function calendarFormat (value, type) {
-    console.log('calendarFormat ', value)
-    let deal = value.split('T')[0]
-    console.log('deal = ', deal)
-    return value
-  };
-  function positiveNumbeVerify (value) {
-    console.log('!!!!!!!positiveNumbeVerify ', value)
-    console.log('typeof value = ', typeof value)
-    if (typeof +value === 'number') {
-
-      let tmp = {valid: +value > 0}
-      if (!tmp.valid) {
-        tmp.msg = '请输入正数'
-      }
-      return tmp
-    } else {
-      return {valid: true}
-    }
-  }
   export default {
     components: {
       Group,
@@ -75,10 +23,17 @@
         op: [],
         bc: '',
         mn: null,
-        demo1: ''
+        demo1: '',
+        ipt: ''
       }
     },
-    created(){
+    created() {
+      this.ipt = `<x-input ref="mb"
+               title="正数"
+               type="number"
+               required
+               v-model="mn">
+      </x-input>`
       this.op = [
         {value: '工商银行', key: '102'},
         {value: '农业银行', key: '103'},
@@ -99,28 +54,11 @@
 //      this.mn = 0
     },
     methods: {
-      ptime(){
-        console.log('demo1 = ', this.demo1)
-      },
-      positiveNumbeVerify, calendarFormat,
-      fuzhi(){
-        this.mn = 0
-      },
       test() {
         let v = this.$refs.mb
         console.log('v = ', v)
-      },
-      idCheck (value) {
-        let {pass, tip} = this.IdentityCodeValid(value)
-        console.log('tip = ', tip)
-        if (pass) {
-          return {valid: true}
-        } else {
-          return {valid: false, msg: tip}
-        }
       }
     }
-
   }
 </script>
 <style>

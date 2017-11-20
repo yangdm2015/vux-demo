@@ -1,115 +1,84 @@
 <script>
-  import { applicantDefault } from '@/static-data/init-data'
-  import { inputFieldSetting } from '@/static-data/fields-setting'
-  import clone from '@/utils/clone'
+  import clone from '@/utils/clone-inspect'
+  import { baseMixin } from '../components/mixins/base-mixins'
   import { Group, XInput, Cell, PopupRadio } from 'vux'
-  function has (arr, item) {
-    return arr.indexOf(item) > -1
-  }
-  function hasKey (obj, key) {
-    return has(Object.keys(obj), key)
-  }
-
-  function getProp (obj, propName) {
-    let arr = []
-    function _getProp (obj, propName) {
-      let flag = false
-      let prop = null
-      if (typeof obj === 'object') {
-        if (hasKey(obj, propName)) {
-          arr.push(propName)
-          flag = true
-          prop = obj[propName]
-        } else {
-          let a = Object.keys(obj)
-          for (let i = 0, len = a.length; i < len; i++) {
-            let key = a[i]
-            let item = obj[key]
-            arr.push(key)
-            console.log('item = ', item)
-            if (_getProp(item, propName).flag) {
-              flag = true
-              prop = item[propName]
-              break
-            }
-            arr.pop()
-          }
-        }
-      }
-      return {flag, prop}
-    }
-    let result = _getProp(obj, propName)
-    return {...result, arr}
-  }
-
-  let a = {d: {}, e: 2, b: {c: 1}}
-  let result = getProp(a, "c")
-  console.log('getProp(a,"c") = ', result)
-  function getHandler(obj,arr){
-    
-  }
-
-  let handler = {}
-
+  import { getPropValue, setPropByArr, has } from '../utils/common-utils'
+  import { groupGen } from '../utils/fields-dealing-utils'
+  let noObjEmit = false
   export default {
     render: function (createElement) {
       let self = this
+      let t = groupGen(createElement, this.localFieldsSetting, self.localObj)
       return createElement(
         'group',
         [
-          createElement('x-' + inputFieldSetting[0].type, {
-            attrs: {
-              title: this.title,
-            },
-            props: {
-              value: this.inputModel1,
-              required: true
-            },
-            on: {
-              input: function (event) {
-                self.inputModel1 = event
-              }
-            }
-          }),
-          createElement('span', {}, this.inputModel1),
-          createElement('x-input', {
-            attrs: {
-              title: this.title,
-
-            },
-            props: {
-              value: this.inputModel2,
-              required: null,
-            },
-            on: {
-              input: function (event) {
-                self.inputModel2 = event
-              }
-            }
-          }),
-          createElement('span', {}, this.inputModel2),
+          ...t,
+          createElement('span', {}, getPropValue(this.localObj, 'name').prop),
+          createElement('span', {}, getPropValue(this.localObj, 'idNumber').prop),
+          createElement('span', {}, getPropValue(this.localObj, 'mainJob').prop),
+          createElement('span', {}, getPropValue(this.localObj, 'bankCode').prop),
         ]
       )
     },
+    props: ['groupName', 'fieldsSetting', 'value'],
     components: {
       Group,
       XInput, Cell, PopupRadio
     },
+    mixins: [baseMixin],
     data(){
       return {
         title: '测试输入框',
         inputModel1: '输入1',
         inputModel2: '输入2',
-        applicant: clone(applicantDefault)
+        localObj: {},
+        localFieldsSetting: this.clone(this.fieldsSetting),
       }
     },
-    created(){
-
+    created() {
+      this.initFields()
+    },
+    watch: {
+      value(v) {
+        this.localObj = this.clone(this.value)
+        noObjEmit = true
+      },
+      fieldsSetting: {
+        handler(v) {
+          this.localFieldsSetting = this.clone(this.fieldsSetting)
+        },
+        deep: true
+      },
+      localObj: {
+        handler(v) {
+          if (noObjEmit) {
+            noObjEmit = false
+          } else {
+            console.log('localObj = ', v)
+            if (Object.keys(v).length > 0) {
+              this.syncAutoFills(v)
+              this.syncInvalidFields()
+            }
+            this.$emit('input', v)
+          }
+        },
+        deep: true
+      }
     },
     methods: {
+      initFields(){
+        this.localObj = this.clone(this.value)
+//        this.localObj = this.value
+      },
+      syncAutoFills(localObj){
+
+      },
+      syncInvalidFields(){
+
+      },
       idCheck(value){
         let {pass, tip} = this.IdentityCodeValid(value)
-        console.log('tip = ', tip)
+//        console.log('tip = ', tip)
         if (pass) {
           return {valid: true}
         } else {

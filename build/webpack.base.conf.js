@@ -15,7 +15,7 @@ let webpackConfig = {
   entry: {
     app: './src/main.js'
   },
-  output: {
+    output: {
     path: config.build.assetsRoot,
     filename: '[name].js',
     publicPath: process.env.NODE_ENV === 'production'
