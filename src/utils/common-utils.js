@@ -3,6 +3,30 @@
  */
 import clone from './clone'
 
+// null : false
+// undefined : false
+// NaN : false
+// '' : false
+// 0 : true
+// '0' : true
+// {} : true
+// other : true
+// false : true
+export function meaningfulOrZero (obj) {  // 值为false且不是0
+  if (!obj) {
+    if (obj === 0 || typeof obj === 'boolean') {
+      return true
+    } else {
+      return false
+    }
+  } else {
+    return true
+  }
+}
+export function totalFalse (obj) {
+  return !meaningfulOrZero(obj)
+}
+
 export function has (arr, item) {
   return arr.indexOf(item) > -1
 }
@@ -60,4 +84,5 @@ export function setPropByArr (obj, arr, value) {
     obj[pName] = value
   }
 }
+
 

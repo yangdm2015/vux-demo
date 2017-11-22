@@ -27,8 +27,13 @@
       <popup-radio title='开户银行'
                    :options="op"
                    v-model="bc"
+                   ref="bank[0]"
                    :readonly="false">
       </popup-radio>
+      <x-button type="primary"
+                @click.native="test">
+        测试按钮
+      </x-button>
       <!--<popup-radio title="options" :options="options1" v-model="option1"></popup-radio>-->
 
     </group>
@@ -39,7 +44,7 @@
 </template>
 
 <script>
-  import { Group, XInput, PopupRadio, Calendar } from 'vux'
+  import { Group, XInput, PopupRadio, Calendar, XButton } from 'vux'
   function calendarFormat (value, type) {
     console.log('calendarFormat ', value)
     let deal = value.split('T')[0]
@@ -62,7 +67,7 @@
   }
   export default {
     components: {
-      Group,
+      Group, XButton,
       XInput, PopupRadio, Calendar
     },
     data () {
@@ -105,6 +110,7 @@
       },
       positiveNumbeVerify, calendarFormat,
       fuzhi(){
+        console.log('this.$refs = ', this.$refs)
         this.mn = 0
       },
       test() {

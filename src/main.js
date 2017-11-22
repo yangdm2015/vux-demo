@@ -13,6 +13,7 @@ import arr from './components/array'
 import renderw from './components/render-wrap'
 import alert from './components/alert'
 import init from './init/init'
+// debugger
 init()
 // import r from './router/index'
 Vue.use(VueRouter)

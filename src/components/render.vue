@@ -1,8 +1,11 @@
 <script>
   import { baseMixin } from '../components/mixins/base-mixins'
-  import { Group, XInput, Cell, PopupRadio } from 'vux'
+  import { Group, XInput, Cell, PopupRadio, Divider, XButton } from 'vux'
   import { getPropValue } from '../utils/common-utils'
-  import { groupGen } from '../utils/fields-dealing-utils'
+  import {
+    groupGen, getUnfilledRequiredField, getRequiredFields,
+    addInvalidateFields
+  } from '../utils/fields-dealing-utils'
   let noObjEmit = false
 
   export default {
@@ -16,14 +19,19 @@
           createElement('span', {}, getPropValue(this.localObj, 'name').prop),
           createElement('span', {}, getPropValue(this.localObj, 'idNumber').prop),
           createElement('span', {}, getPropValue(this.localObj, 'mainJob').prop),
-          createElement('span', {}, getPropValue(this.localObj, 'bankCode').prop)
+          createElement('span', {}, getPropValue(this.localObj, 'bankCode').prop),
+//          createElement('x-button', {
+//            props: {
+//              type: 'primary'
+//            }
+//          }, '测试按钮'),
         ]
       )
     },
-    props: ['groupName', 'fieldsSetting', 'value'],
+    props: ['groupTitle', 'fieldsSetting', 'value'],
     components: {
-      Group,
-      XInput, Cell, PopupRadio
+      Group, XButton,
+      XInput, Cell, PopupRadio, Divider
     },
     mixins: [baseMixin],
     data() {
@@ -54,7 +62,7 @@
           if (noObjEmit) {
             noObjEmit = false
           } else {
-            console.log('localObj = ', v)
+//            console.log('localObj = ', v)
             if (Object.keys(v).length > 0) {
               this.syncAutoFills(v)
               this.syncInvalidFields()
@@ -74,17 +82,17 @@
 
       },
       syncInvalidFields() {
-
+        let requiredFields = getRequiredFields(this.localFieldsSetting)
+        let invalidFields = getUnfilledRequiredField(this.localFieldsSetting, this.localObj)
+        this.$nextTick(function () {
+//          console.log('this.$refs = ', this.$refs)
+          if (this.$refs[this.groupTitle]) { // 如果有需要校验的input组件，则要校验这些组件的值
+            let refDoms = this.$refs[this.groupTitle]
+            invalidFields = addInvalidateFields(requiredFields, invalidFields, refDoms)
+          }
+          this.$emit('invalidFieldsChanged', {invalidFields, groupTitle: this.groupTitle})
+        })
       },
-      idCheck(value) {
-        let {pass, tip} = this.IdentityCodeValid(value)
-//        console.log('tip = ', tip)
-        if (pass) {
-          return {valid: true}
-        } else {
-          return {valid: false, msg: tip}
-        }
-      }
     }
 
   }

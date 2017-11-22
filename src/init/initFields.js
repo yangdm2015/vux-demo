@@ -18,10 +18,12 @@ function initFieldsRequirements (item) {
 }
 
 export function initFields () {
+  console.log('inputFieldSetting = ', inputFieldSetting)
   for (let i in inputFieldSetting) {
     let item = inputFieldSetting[i]
     // console.log('item = ', item)
     initFieldsRequirements(item)
   }
+  // Object.freeze(inputFieldSetting)
   // console.log('执行完毕！')
 }
