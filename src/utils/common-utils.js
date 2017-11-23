@@ -41,25 +41,29 @@ export function getPropValue (obj, propName) {
     let flag = false
     let prop = null
     if (typeof obj === 'object') {
-      if (hasKey(obj, propName)) {
-        arr.push(propName)
-        flag = true
-        prop = obj[propName]
-      } else {
-        let a = Object.keys(obj)
-        for (let i = 0, len = a.length; i < len; i++) {
-          let key = a[i]
-          let item = obj[key]
-          arr.push(key)
-//            console.log('item = ', item)
-          if (_getProp(item, propName).flag) {
-            flag = true
-            prop = item[propName]
-            break
+      if (obj !== null) {
+        if (hasKey(obj, propName)) {
+          arr.push(propName)
+          flag = true
+          prop = obj[propName]
+        } else {
+          // debugger
+          let a = Object.keys(obj)
+          for (let i = 0, len = a.length; i < len; i++) {
+            let key = a[i]
+            let item = obj[key]
+            arr.push(key)
+            if (_getProp(item, propName).flag) {
+              flag = true
+              prop = item[propName]
+              break
+            }
+            arr.pop()
           }
-          arr.pop()
         }
       }
+    } else {
+      prop = obj
     }
     return {flag, prop}
   }
@@ -85,4 +89,8 @@ export function setPropByArr (obj, arr, value) {
   }
 }
 
+export function test () {
+  debugger
+  return 'test'
+}
 

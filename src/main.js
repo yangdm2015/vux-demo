@@ -1,5 +1,7 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
+import init from './init/init'
+init()
 import Vue from 'vue'
 import FastClick from 'fastclick'
 import VueRouter from 'vue-router'
@@ -12,9 +14,10 @@ import vhtml from './components/vhtml.vue'
 import arr from './components/array'
 import renderw from './components/render-wrap'
 import alert from './components/alert'
-import init from './init/init'
+
+import './styles/index.scss' // 全局自定义的css样式
 // debugger
-init()
+
 // import r from './router/index'
 Vue.use(VueRouter)
 // console.log('r = ',r)

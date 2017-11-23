@@ -38,27 +38,28 @@ function trigger (targetPropValue, showTriggerValue) {
   }
 }
 
-function showField (curObj, curFS) {
-  let tpName = curFS.showTriggerPropName
-  let tpTriggerValue = curFS.showTriggerValue
+function showField (curObj, setting) {
+  let tpName = setting.showTriggerPropName
+  let tpTriggerValue = setting.showTriggerValue
   let tpValue = getPropValue(curObj, tpName).prop
-  // debugger
-  if (!tpTriggerValue) {
-    debugger
-  }
+
   return trigger(tpValue, tpTriggerValue)
 }
 
-function computeDisplay (curObj, curFS) {
-  let flag = showField(curObj, curFS)
+function computeDisplay (curObj, setting) {
+  if (setting.propName === 'emergencyContactName') {
+    debugger
+  }
+  let flag = showField(curObj, setting)
   return flag ? 'flex' : 'none'
 }
 
-function computStyle (curObj, curFS) {
-  return curFS.showTriggerPropName ? `display:${computeDisplay(curObj, curFS)}` : ''
+function computeStyle (curObj, setting) {
+
+  return setting.showTriggerPropName ? `display:${computeDisplay(curObj, setting)}` : ''
 }
 
-function computRequire4TriggeredField (curObj, curFS) {
+function computeRequire4TriggeredField (curObj, curFS) {
   if (curFS.initNoRequired) {
     return false
   } else {
@@ -66,51 +67,89 @@ function computRequire4TriggeredField (curObj, curFS) {
   }
 }
 
-function computRequire (curObj, curFS) {
-  return curFS.showTriggerPropName ? computRequire4TriggeredField(curObj, curFS) : true
+function computeRequire (curObj, curFS) {
+  return curFS.showTriggerPropName ? computeRequire4TriggeredField(curObj, curFS) : true
 }
 
-function xInputGen (fn, setting, propName, curObj) {
+function computeContent (setting, fn) {
+  let content = ''
+  if (setting.content) {
+    if (typeof setting.content === 'object' && setting.content instanceof Array) {
+      content = setting.content.map(i => fn(i.type, {...i.slot}, i.content))
+      // console.log('setting.context = ', setting.context)
+      // context = [fn('span', {slot: 'right'}, '万元')]
+    } else {
+      content = setting.content
+    }
+    // console.log('content = ', content)
+  }
+  return content
+}
+
+function computeNativeOn (curObj, setting, self) {
+  let nativeOn = {}
+  if (setting.nativeOn && setting.nativeOn.click) {
+    nativeOn.click = function (e) {
+      setting.nativeOn.click(curObj, setting, self)
+    }
+  }
+  return nativeOn
+}
+
+function setInputValue (curObj, setting, value) {
+  let vTmp = value
+  //
+  if (setting.on && setting.on.input) {
+    vTmp = setting.on.input(value)
+  }
+
+  setPropByArr(curObj, setting.path, vTmp)
+}
+
+function getShowValue (curObj, setting) {
+  let vTmp = getPropValue(curObj, setting.propName).prop
+  let targetPropName = setting.targetPropName
+  let computFn = setting.computFn
+
+  if (setting.value) {
+    vTmp = setting.value(vTmp)
+  }
+  if (setting.propName === 'gender') {
+    // debugger
+  }
+  if (computFn && targetPropName) {
+    let targetPropValue = getPropValue(curObj, targetPropName).prop
+    console.log('targetPropValue = ', targetPropValue)
+    vTmp = computFn(targetPropValue)
+  }
+  return vTmp
+}
+
+function xInputGen (fn, setting, curObj, self) {
   // let setting = currentFieldSetting.find(i => i.propName === propName)
   // let children = []
-  // let context = ''
-  // if (setting.context) {
-  //   if(typeof setting.context==='object'&&setting.context instanceof Array){
-  //
-  //   }else {
-  //     context = setting.context
-  //   }
-  //   console.log('tmp = ', setting)
-  // }
+  // console.log('self = ', self)
   return fn(setting.type, {
     attrs: {
       title: setting.label,
-      style: computStyle(curObj, setting),
-      'data-propName': propName,
+      style: computeStyle(curObj, setting),
+      'data-propName': setting.propName,
       ...setting.attrs
     },
     props: {
-      value: getPropValue(curObj, propName).prop,
-      required: computRequire(curObj, setting),
+      value: getShowValue(curObj, setting),
+      required: computeRequire(curObj, setting),
       ...setting.props
     },
     on: {
       input: function (value) {
-        let arr = setting.path
-        if (!arr) {
-          // console.log('setting = ', setting)
-        }
-        setPropByArr(curObj, arr, value)
+        setInputValue(curObj, setting, value)
       }
     },
-    nativeOn: {
-      click: function (e) {
-        setting.nativeOn.click(curObj, setting)
-      }
-    },
+    nativeOn: {...computeNativeOn(curObj, setting, self)},
     ...setting.highestProps
     // })
-  }, setting.context)
+  }, computeContent(setting, fn))
 }
 
 function xInputGenbak (fn, setting, propName, curObj) {
@@ -127,13 +166,13 @@ function xInputGenbak (fn, setting, propName, curObj) {
   return fn(setting.type, {
     attrs: {
       title: setting.label,
-      style: computStyle(curObj, setting),
+      style: computeStyle(curObj, setting),
       'data-propName': propName,
       ...setting.attrs
     },
     props: {
       value: getPropValue(curObj, propName).prop,
-      required: computRequire(curObj, setting),
+      required: computeRequire(curObj, setting),
       ...setting.props
     },
     on: {
@@ -155,11 +194,10 @@ function xInputGenbak (fn, setting, propName, curObj) {
   }, setting.context)
 }
 
-export function groupGen (fn, fieldsSetting, curObj) {
+export function groupGen (fn, fieldsSetting, curObj, self) {
   let result = []
   fieldsSetting.forEach(setting => {
-    let propName = setting.propName
-    result.push(xInputGen(fn, setting, propName, curObj))
+    result.push(xInputGen(fn, setting, curObj, self))
   })
   return result
 }
@@ -168,7 +206,7 @@ function getUnfilledFields (requiredFields, currentObject) {
   let invalidFields = new Set()
   requiredFields.forEach(field => {
     if (fieldNoValue(field, currentObject)) {
-      // console.log('incalid field = ', field.propName)
+      console.log('incalid field = ', field.propName)
       invalidFields.add(field)
     }
   })
@@ -205,4 +243,18 @@ export function addInvalidateFields (requiredFields, invalidFields, refDoms) {
     }
   })
   return invalidFieldsTmp
+}
+
+export function setNumRate (rate) {
+  let tmp = {
+    on: {
+      input(value){
+        return value * rate
+      }
+    },
+    value (value){
+      return value / rate
+    }
+  }
+  return tmp
 }

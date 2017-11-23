@@ -1,7 +1,9 @@
 <script>
   import { baseMixin } from '../components/mixins/base-mixins'
   import { Group, XInput, Cell, PopupRadio, Divider, XButton } from 'vux'
-  import { getPropValue } from '../utils/common-utils'
+  import { getPropValue, test } from '../utils/common-utils'
+  import { AutoFill } from './input-components'
+  import clone from '../utils/clone-inspect'
   import {
     groupGen, getUnfilledRequiredField, getRequiredFields,
     addInvalidateFields
@@ -9,17 +11,22 @@
   let noObjEmit = false
 
   export default {
-    render: function (createElement) {
+    render: function (ce) {
       let self = this
-      let t = groupGen(createElement, this.localFieldsSetting, self.localObj)
-      return createElement(
+      let t = groupGen(ce, this.localFieldsSetting, self.localObj,self)
+      return ce(
         'group',
         [
           ...t,
-          createElement('span', {}, getPropValue(this.localObj, 'name').prop),
-          createElement('span', {}, getPropValue(this.localObj, 'idNumber').prop),
-          createElement('span', {}, getPropValue(this.localObj, 'mainJob').prop),
-          createElement('span', {}, getPropValue(this.localObj, 'bankCode').prop),
+          ce('span', {}, getPropValue(this.localObj, 'name').prop),
+          ce('span', {}, getPropValue(this.localObj, 'idNumber').prop),
+          ce('span', {}, getPropValue(this.localObj, 'mainJob').prop),
+          ce('span', {}, getPropValue(this.localObj, 'bankCode').prop),
+          ce('div', {props: {slot: 'right'}}, '万元'),
+          ce('x-input', {attrs: {title: '月收入'}}, [
+            ce('span', {slot: 'right'}, '万元')
+          ]),
+          ce('div', {}, [ce('span', '测试')])
 //          createElement('x-button', {
 //            props: {
 //              type: 'primary'
@@ -31,7 +38,8 @@
     props: ['groupTitle', 'fieldsSetting', 'value'],
     components: {
       Group, XButton,
-      XInput, Cell, PopupRadio, Divider
+      XInput, Cell, PopupRadio, Divider,
+      AutoFill
     },
     mixins: [baseMixin],
     data() {
@@ -40,10 +48,14 @@
         inputModel1: '输入1',
         inputModel2: '输入2',
         localObj: {},
-        localFieldsSetting: this.clone(this.fieldsSetting)
+//        localFieldsSetting: {}
+
+        localFieldsSetting: this.clone(this.fieldsSetting),
+//        test: test(),
       }
     },
     created() {
+
       this.initFields()
     },
     watch: {
@@ -76,6 +88,7 @@
     methods: {
       initFields() {
         this.localObj = this.clone(this.value)
+//        debugger
 //        this.localObj = this.value
       },
       syncAutoFills(localObj) {
@@ -84,6 +97,7 @@
       syncInvalidFields() {
         let requiredFields = getRequiredFields(this.localFieldsSetting)
         let invalidFields = getUnfilledRequiredField(this.localFieldsSetting, this.localObj)
+//        console.log('invalidFields = ', invalidFields)
         this.$nextTick(function () {
 //          console.log('this.$refs = ', this.$refs)
           if (this.$refs[this.groupTitle]) { // 如果有需要校验的input组件，则要校验这些组件的值

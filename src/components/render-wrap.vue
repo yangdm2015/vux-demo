@@ -21,14 +21,15 @@
   //  let groupFields = [
   //    'name', 'idNumber', 'mainJob',
   //    'bankCode', 'clientWorkType',
-  //    'mobile', 'jobInfo', 'showContact2']
-  let groupFields = ['mobile', 'showContact2']
+  //    'mobile', 'jobInfo', 'showContact2', 'gender', 'annualIncome']
+  let groupFields = [
+    'name', 'idNumber', 'mainJob', 'bankCode', 'clientWorkType',
+    'mobile', 'jobInfo', 'showContact2', 'gender', 'annualIncome',
+    'emergencyContactName'
+  ]
   let groupTitle = 'applicant'
   //  console.log('in render Wrap, inputFieldSetting =', inputFieldSetting)
-  let currentInputFieldSetting = clone(inputFieldSetting.filter(i =>
-    i.parentObject[0] === groupTitle && has(groupFields, i.propName)
-  ))
-  //  debugger
+
   export default {
     mixins: [baseMixin],
     components: {
@@ -38,12 +39,12 @@
       return {
         defaultObj: this.clone(applicantDefault),
 //        defaultObj: applicantDefault,
-        fieldsSetting: currentInputFieldSetting,
+        fieldsSetting: [],
         groupTitle
       }
     },
     created() {
-      this.syncObjPath()
+      this.getfields()
     },
     watch: {
       defaultObj: {
@@ -61,6 +62,13 @@
       }
     },
     methods: {
+      getfields(){
+//        debugger
+        this.fieldsSetting = clone(inputFieldSetting.filter(i =>
+          i.parentObject[0] === groupTitle && has(groupFields, i.propName)
+        ))
+        this.syncObjPath()
+      },
       showFields({invalidFields}) {
         this.invalidFields = invalidFields
         console.log('this.invalidFields.size = ', this.invalidFields.size)

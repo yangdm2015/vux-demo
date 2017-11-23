@@ -15,6 +15,8 @@
 //   }
 // }
 export default function clone (obj) {
+  debugger
+  console.log('sp clone')
   if (typeof obj !== 'object') {
     return obj
   } else if (!obj) { // null

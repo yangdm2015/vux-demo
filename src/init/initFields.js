@@ -5,6 +5,10 @@ import { getPropValue } from '../utils/common-utils'
 import { inputFieldSetting }from '../static-data/fields-setting'
 
 function initFieldsRequirements (item) {
+  console.log('initFieldsRequirements is running!')
+  // if (item.propName === 'mainJob') {
+  //   debugger
+  // }
   if (item.isShow) {
     item.showTriggerPropName = item.isShow.split('===')[0].trim()
     item.showTriggerValue = item.isShow.split('===')[1].trim()

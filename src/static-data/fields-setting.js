@@ -3,8 +3,8 @@
  */
 import * as options from '../static-data/options'
 import { setPropByArr } from '../utils/common-utils'
-import { computRequire } from '../utils/fields-dealing-utils'
-
+import { computRequire, setNumRate } from '../utils/fields-dealing-utils'
+import * as autoFillFn from '../utils/auto-fill-dealing-functions'
 const commonFieldProps = {
   'text-align': 'right'
 }
@@ -20,6 +20,7 @@ const applicantInputSetting = {
     refInFor: true
   }
 }
+
 // function applicantInputAttrs(setting){
 //
 // }
@@ -47,6 +48,19 @@ export const inputFieldSetting = [
       type: 'text',
       ...applicantInputProps
     },
+  },
+  // 性别
+  {
+    type: 'auto-fill',
+    propName: 'gender',
+    label: '性别',
+    targetPropName: 'idNumber',
+    autoFillType: 'computFn',
+    computFn: autoFillFn['getGenderFromId'],
+    parentObject: ['applicant'],
+    highestProps: {
+      class: 'autofill'
+    }
   },
   // 手机号
   // {
@@ -82,7 +96,20 @@ export const inputFieldSetting = [
     }
 
   },
-  // 开户银行
+  // 个人年收入
+  {
+    ...applicantInputSetting,
+    propName: 'annualIncome',
+    label: '个人年收入',
+    props: {
+      ...applicantInputProps,
+    },
+    content: [
+      {type: 'span', slot: {slot: 'right'}, content: '万元'}
+    ],
+    ...setNumRate(10000)
+  },
+// 开户银行
   {
     type: 'popup-radio',
     propName: 'bankCode',
@@ -91,8 +118,9 @@ export const inputFieldSetting = [
     props: {
       options: options['bankCodes'],
     }
-  },
-  // 客户类型
+  }
+  ,
+// 客户类型
   {
     type: 'popup-radio',
     propName: 'clientWorkType',
@@ -101,45 +129,54 @@ export const inputFieldSetting = [
     props: {
       options: options['clientWorkTypes'],
     }
-  },
+  }
+  ,
 
-  // 分割线
+// 分割线
   {
     type: 'divider',
     propName: 'jobInfo',
     label: '客户信息',
     parentObject: ['applicant'],
     noRequired: true,
-    context: '客户信息',
+    content: '客户信息',
     children: [{
       type: 'span',
       attrs: {title: 'block'},
-      context: '客户信息'
+      content: '客户信息'
       // ['span', {attrs: {title: 'block'}}, '客户信息']
     }]
-  },
+  }
+  ,
 // 按钮
   {
     type: 'x-button',
     propName: 'showContact2',
     label: '显示联系人2信息',
-    attrs: {},
     props: {
       type: 'primary'
     },
     nativeOn: {
-      click: function (curObj, setting) {
+      click: function (curObj, setting, self) {
         console.log('curObj = ', curObj)
-        // let arr = setting.path
-        // setPropByArr(curObj, arr, value)
+        self.$set(self.localObj, setting.propName, 1)
       }
     },
     parentObject: ['applicant'],
     noRequired: true,
-    context: '显示联系人',
+    content: '显示联系人',
     highestProps: {
       class: 'show-contract2'
     }
+  },
+  // 紧急联系人
+  {
+    ...applicantInputSetting,
+    propName: 'emergencyContactName',
+    label: '紧急联系人姓名',
+    props: {
+      ...applicantInputProps
+    },
+    isShow: 'showContact2 === 1',
   }
-
 ]

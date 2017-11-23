@@ -1,12 +1,14 @@
 <template>
   <div>
     <group>
-      <!--<x-input ref="mb"-->
-      <!--title="正数"-->
-      <!--type="number"-->
-      <!--required-->
-      <!--v-model="mn">-->
-      <!--</x-input>-->
+      <x-input ref="mb"
+               title="正数"
+               type="number"
+               required
+               v-model="mn">
+        <!--<img slot="right" class="weui-vcode-img" src="https://i.loli.net/2017/09/18/59bf7f32425d5.jpg">-->
+        <span slot="right">万元</span>
+      </x-input>
       <!--<x-input is-type="china-mobile"-->
       <!--title="手机号码格式化"-->
       <!--v-model="testText"-->
@@ -16,8 +18,7 @@
       <!--<x-input is-type="china-name"-->
       <!--title="中国人名"-->
       <!--v-model="name"-->
-      <!--:max="13"-->
-      <!--disabled>-->
+      <!--:max="13">-->
       <!--</x-input>-->
       <!--<calendar v-model="demo1"-->
       <!--title="demo1"-->
